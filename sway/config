@@ -10,7 +10,7 @@ set $up k
 set $right l
 
 # Your preferred terminal emulator
-set $term alacritty
+set $term wezterm
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
@@ -19,13 +19,18 @@ font pango:SourceCodePro Medium 8
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | dmenu | xargs swaymsg exec --
+#set $menu dmenu_path | dmenu | xargs swaymsg exec --
+set $uifont "Ubuntu 8"
+set $highlight #3daee9
+set $prompt #18b218
+set $menu bemenu-run --fn $uifont -b -p "▶" --tf "$prompt" --hf "$highlight" --sf "$highlight" --scf "$highlight" | xargs swaymsg exec
 
 # Use GNOME keyring outside GNOME
 exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=secrets,ssh
 
 ### Output configuration using Kanshi
 exec_always "systemctl --user import-environment; systemctl --user start sway-session.target"
+
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 output * bg /home/janar/Documents/tux.jpg fill
@@ -45,7 +50,7 @@ exec swayidle -w \
          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
          before-sleep 'playerctl pause' \
          before-sleep 'swaylock -f -c 000000'
-#
+
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
@@ -255,9 +260,14 @@ set $screenshotout $HOME/Pictures/$(date "+%Y-%m-%d-%H%M%S_shot.png")
 bindsym Ctrl+Shift+4 exec grimshot copy area
 bindsym Ctrl+Shift+5 exec grimshot save area $screenshotout
 
+bindsym Ctrl+$mod+l exec "sleep 1; killall -SIGUSR1 swayidle"
+
 exec --no-startup-id protonmail-bridge
 exec --no-startup-id keepassxc
 exec --no-startup-id flatpak run im.riot.Riot
 exec --no-startup-id nextcloud
 exec --no-startup-id flatpak run com.slack.Slack
 exec --no-startup-id flatpak run com.spotify.Client
+exec mako
+
+exec_always "systemctl --user restart kanshi.service"
